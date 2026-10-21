@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ServerMonitor - PT. XYZ</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#0d1b3e;--blue:#2563eb;--bg:#f3f6fc;--bd:#e6ebf4;--tx:#1b2640;--mu:#6b7690;--g:#16a34a;--o:#f59e0b;--r:#ef4444;--p:#8b5cf6}
+body{font-family:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif;background:var(--bg);color:var(--tx);font-size:13px;display:flex;min-height:100vh}
+aside{width:200px;background:var(--navy);color:#cfd8ee;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;flex-shrink:0;transition:margin .2s}
+aside.hide{margin-left:-200px}
+.logo{display:flex;align-items:center;gap:10px;padding:18px 16px;color:#fff;font-size:17px;font-weight:700}
+.logo i{width:30px;height:30px;border-radius:8px;background:var(--blue);display:grid;place-items:center;font-style:normal;font-size:15px}
+.logo b{color:#6aa3ff}
+nav{padding:8px 12px;display:flex;flex-direction:column;gap:4px}
+nav a{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:8px;color:#cfd8ee;cursor:pointer;text-decoration:none;font-size:13px}
+nav a:hover{background:#17285a}
+nav a.on{background:var(--blue);color:#fff}
+nav a em{margin-left:auto;background:var(--r);color:#fff;font-style:normal;font-size:10px;border-radius:10px;padding:1px 6px}
+.side-f{margin-top:auto;padding:16px;font-size:11px;color:#8d9abb}.side-f b{color:#fff;font-size:13px;display:block}
+main{flex:1;min-width:0;display:flex;flex-direction:column}
+header{background:#fff;border-bottom:1px solid var(--bd);height:56px;display:flex;align-items:center;padding:0 20px;gap:14px;position:sticky;top:0;z-index:5}
+header h2{font-size:16px;font-weight:600}
+.burger{cursor:pointer;font-size:18px;color:var(--mu);background:none;border:0}
+.hr{margin-left:auto;display:flex;align-items:center;gap:18px}
+.bell{position:relative;font-size:17px;cursor:pointer}.bell s{position:absolute;top:-6px;right:-8px;background:var(--r);color:#fff;font-size:9px;border-radius:8px;padding:1px 5px;text-decoration:none}
+.usr{display:flex;align-items:center;gap:8px}.usr i{width:30px;height:30px;border-radius:50%;background:#46526f;color:#fff;display:grid;place-items:center;font-style:normal}
+.wrap{padding:16px 20px;flex:1}
+.card{background:#fff;border:1px solid var(--bd);border-radius:10px;padding:14px;box-shadow:0 1px 3px rgba(20,40,90,.05)}
+.card h3{font-size:15px;font-weight:600;margin-bottom:10px}
+.wel{display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap}
+.wel .ic{width:52px;height:52px;border-radius:12px;background:#eaf1ff;display:grid;place-items:center;font-size:26px}
+.wel h1{font-size:20px}.wel p{color:var(--mu);margin-top:3px}
+.wel .dt{margin-left:auto;text-align:right;color:var(--mu)}.wel .dt b{display:block;font-size:15px;color:var(--tx);margin-top:4px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px}
+.stat{padding:14px 14px 0;overflow:hidden}
+.stat .t{display:flex;gap:12px;align-items:center}
+.stat .ic{width:42px;height:42px;border-radius:10px;display:grid;place-items:center;color:#fff;font-size:20px}
+.stat small{color:var(--mu);display:block}.stat strong{font-size:23px;font-weight:700}
+.badge{display:inline-block;font-size:11px;padding:1px 10px;border-radius:4px;margin-top:2px}
+.b-ok{background:#dcfce7;color:#15803d}.b-w{background:#fef3c7;color:#b45309}.b-c{background:#fee2e2;color:#b91c1c}
+.stat svg{display:block;width:calc(100% + 28px);margin:6px -14px 0;height:50px}
+.cols{display:grid;grid-template-columns:1fr 330px;gap:14px;align-items:start}
+.stack{display:flex;flex-direction:column;gap:14px;min-width:0}
+.ch-h{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}.ch-h h3{margin:0;font-size:17px;margin-right:auto}
+select,input[type=number]{border:1px solid var(--bd);border-radius:6px;padding:6px 8px;background:#fff;font:inherit;color:var(--tx)}
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:18px}.cg h4{font-size:13px;margin:8px 0 2px}
+.cg svg{width:100%;height:auto;display:block}
+.srv{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--bd)}
+.srv:first-of-type{border-top:0}
+.dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.srv div{flex:1}.srv small{display:block;color:var(--mu);font-size:10px}
+.pill{font-size:10px;padding:1px 8px;border-radius:4px;background:#dcfce7;color:#15803d}
+.top{display:flex;align-items:center;margin-bottom:8px}.top h3{margin:0}.top a{margin-left:auto;color:var(--blue);font-size:11px;cursor:pointer}
+.nt{display:flex;gap:10px;padding:10px 0;border-top:1px solid var(--bd);align-items:flex-start;cursor:pointer}
+.nt .ni{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;font-size:13px}
+.nt p{font-size:12px;line-height:1.5}.nt small{color:var(--mu);font-size:11px}
+.lv{font-size:10px;font-weight:700;padding:1px 7px;border-radius:4px;margin-right:6px}
+.row{display:flex;gap:12px;align-items:center}
+.row .ic{width:40px;height:40px;border-radius:10px;background:#eaf1ff;display:grid;place-items:center;font-size:18px;flex-shrink:0}
+.row small{color:var(--mu);display:block;margin-top:2px;font-size:11px}
+.sw{width:42px;height:22px;border-radius:12px;background:#cbd3e4;position:relative;cursor:pointer;transition:.2s;flex-shrink:0;display:block;margin-top:8px}
+.sw:after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s}
+.sw.on{background:var(--blue)}.sw.on:after{left:22px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;background:#f4f7fc;padding:9px 10px;font-weight:600}
+td{padding:9px 10px;border-top:1px solid var(--bd)}
+tbody tr:hover{background:#f9fbff}
+.sd{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+.rec{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.rc{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:8px;cursor:pointer;border:1px solid}
+.rc i{font-style:normal;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:12px;flex-shrink:0}
+.rc div{flex:1;font-size:12px;font-weight:600}.rc small{display:block;font-weight:400;color:var(--mu)}
+.r-c{background:#fff1f1;border-color:#fbc9c9}.r-c i{background:var(--r)}
+.r-w{background:#fff7e8;border-color:#fbe1a8}.r-w i{background:var(--o)}
+footer{padding:14px 20px;display:flex;justify-content:space-between;color:var(--mu);font-size:11px;border-top:1px solid var(--bd);background:#fff}
+.btn{background:var(--blue);color:#fff;border:0;border-radius:6px;padding:8px 14px;font:inherit;cursor:pointer}
+.field{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--bd)}.field label{flex:1}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--navy);color:#fff;padding:10px 16px;border-radius:8px;opacity:0;transition:.3s;pointer-events:none}.toast.show{opacity:1}
+@media(max-width:1100px){.cols{grid-template-columns:1fr}.g4{grid-template-columns:1fr 1fr}.rec{grid-template-columns:1fr}}
+#ov{display:none}.cls{margin-left:auto;background:none;border:0;color:#cfd8ee;font-size:18px;cursor:pointer;padding:4px 8px;border-radius:6px}.cls:hover{background:#17285a}
+@media(max-width:700px){aside{position:fixed;z-index:20;margin-left:-200px}aside.open{margin-left:0}aside.open+#ov{display:block;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:15}.cg{grid-template-columns:1fr}.g4{grid-template-columns:1fr}.wrap{padding:12px}.tw{overflow-x:auto}}
+</style>
+</head>
+<body>
+<aside id="side">
+  <div class="logo"><i>▤</i><span>Server<b>Monitor</b></span><button class="cls" onclick="tg()" aria-label="Tutup sidebar">«</button></div>
+  <nav id="nav"></nav>
+  <div class="side-f"><b>PT. XYZ</b>Sistem Monitoring Infrastruktur TI<br>v1.0</div>
+</aside>
+<div id="ov" onclick="tg()"></div>
+<main>
+  <header>
+    <button class="burger" onclick="tg()">☰</button><h2 id="ttl">Dashboard</h2>
+    <div class="hr"><span class="bell" onclick="go('notifikasi')">🔔<s id="bc">3</s></span><div class="usr"><i>👤</i>admin ▾</div></div>
+  </header>
+  <div class="wrap" id="app"></div>
+  <footer><span>© 2025 PT. XYZ. All rights reserved.</span><span>Dikembangkan dengan <span style="color:#e11d48">❤</span> menggunakan Laravel</span></footer>
+</main>
+<div class="toast" id="toast"></div>
+<script>
+const $=s=>document.querySelector(s);
+const C={g:'#16a34a',b:'#2563eb',o:'#f59e0b',p:'#8b5cf6'};
+const S=[
+ {n:'Server-01',ip:'192.168.10.10',cpu:45.2,ram:62.8,disk:78.4,net:120.6,st:'Normal'},
+ {n:'Server-02',ip:'192.168.10.11',cpu:67.3,ram:71.5,disk:88.0,net:98.2,st:'Warning'},
+ {n:'Server-03',ip:'192.168.10.12',cpu:95.0,ram:68.7,disk:76.2,net:75.6,st:'Critical'},
+ {n:'Server-04',ip:'192.168.10.13',cpu:82.1,ram:85.0,disk:69.8,net:64.3,st:'Warning'},
+ {n:'Server-05',ip:'192.168.10.14',cpu:38.6,ram:55.2,disk:61.7,net:52.9,st:'Normal'}];
+const N=[
+ {lv:'CRITICAL',t:'21 Apr 2025 09:45',m:'CPU Server-03 mencapai 95%',d:'Potensi gangguan performa server.'},
+ {lv:'WARNING',t:'21 Apr 2025 08:30',m:'Disk Server-02 mencapai 88%',d:'Hampir penuh, perlu perhatian.'},
+ {lv:'WARNING',t:'21 Apr 2025 07:15',m:'RAM Server-04 mencapai 85%',d:'Penggunaan memori tinggi.'}];
+const R=[
+ {c:'r-c',m:'Segera cek Server-03',d:'CPU tinggi (95%)'},
+ {c:'r-w',m:'Periksa kapasitas disk Server-02',d:'Disk sudah mencapai 88%'},
+ {c:'r-w',m:'Pantau penggunaan memori Server-04',d:'RAM mencapai 85%'}];
+const col=s=>s=='Normal'?C.g:s=='Warning'?C.o:'#ef4444';
+const bc=s=>s=='Normal'?'b-ok':s=='Warning'?'b-w':'b-c';
+const lvStyle=l=>l=='CRITICAL'?['#fee2e2','#b91c1c','🔴']:['#fef3c7','#b45309','🟠'];
+let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+function gen(base,amp,n=48){let v=base,a=[];for(let i=0;i<n;i++){v+= (rnd()-.5)*amp;v+=(base-v)*.2;a.push(v)}a[n-1]=base;return a}
+function spark(d,c,id){const w=300,h=50,mx=Math.max(...d),mn=Math.min(...d);
+ const p=d.map((v,i)=>[i/(d.length-1)*w,h-4-(v-mn)/(mx-mn||1)*(h-12)]);
+ const l=p.map((q,i)=>(i?'L':'M')+q[0].toFixed(1)+' '+q[1].toFixed(1)).join('');
+ return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><defs><linearGradient id="g${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c}" stop-opacity=".25"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></linearGradient></defs><path d="${l}L${w} ${h}L0 ${h}Z" fill="url(#g${id})"/><path d="${l}" fill="none" stroke="${c}" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg>`}
+function line(d,c,max,unit,id,big){const W=330,H=big?230:150,L=34,B=20,T=8,R=6;
+ const ticks=max==200?[0,50,100,150,200]:[0,25,50,75,100];
+ const x=i=>L+i/(d.length-1)*(W-L-R),y=v=>T+(1-v/max)*(H-T-B);
+ let g='';ticks.forEach(t=>g+=`<line x1="${L}" x2="${W-R}" y1="${y(t)}" y2="${y(t)}" stroke="#e9edf5"/><text x="${L-6}" y="${y(t)+3}" text-anchor="end" font-size="9" fill="#6b7690">${t}</text>`);
+ ['00:00','04:00','08:00','12:00','16:00','20:00'].forEach((t,i)=>g+=`<text x="${L+i*(W-L-R)/5.3}" y="${H-5}" font-size="9" fill="#6b7690" text-anchor="middle">${t}</text>`);
+ const l=d.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join('');
+ const last=d[d.length-1];
+ return `<svg viewBox="0 0 ${W} ${H}"><defs><linearGradient id="l${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c}" stop-opacity=".22"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></linearGradient></defs>${g}<path d="${l}L${x(d.length-1)} ${y(0)}L${L} ${y(0)}Z" fill="url(#l${id})"/><path d="${l}" fill="none" stroke="${c}" stroke-width="1.5"/><rect x="${W-R-56}" y="${T}" width="56" height="16" rx="3" fill="${c}" opacity=".15"/><text x="${W-R-28}" y="${T+11}" text-anchor="middle" font-size="10" font-weight="600" fill="${c}">${last.toFixed(1)}${unit}</text></svg>`}
+const ICONS={dashboard:'⌂',server:'☰',monitoring:'◉',riwayat:'⟳',notifikasi:'🔔',pengaturan:'⚙'};
+const LBL={dashboard:'Dashboard',server:'Server',monitoring:'Monitoring',riwayat:'Riwayat',notifikasi:'Notifikasi',pengaturan:'Pengaturan'};
+let cur='dashboard',selSrv=0,range=24,tele=true;
+function nav(){$('#nav').innerHTML=Object.keys(LBL).map(k=>`<a href="#${k}" class="${k==cur?'on':''}" onclick="go('${k}');return false"><span style="width:18px;text-align:center">${ICONS[k]}</span>${LBL[k]}${k=='notifikasi'?'<em>3</em>':''}</a>`).join('')}
+function go(p){cur=p;try{history.replaceState(null,'','#'+p)}catch(e){}$('#ttl').textContent=LBL[p];nav();render();$('#side').classList.remove('open');scrollTo(0,0)}
+function tg(){const s=$('#side');innerWidth<=700?s.classList.toggle('open'):s.classList.toggle('hide')}
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000)}
+function clock(){const d=new Date(),h=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'],b=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+ const e=$('#clk');if(e)e.innerHTML=`${h[d.getDay()]}, ${d.getDate()} ${b[d.getMonth()]} ${d.getFullYear()}<b>${d.toLocaleTimeString('id-ID',{hour12:false}).replace(/\./g,':')}</b>`}
+setInterval(clock,1000);
+
+const stats=()=>{const s=S[0];return [
+ ['CPU Usage',s.cpu+'%','Normal',C.g,'▣','#16a34a',48],
+ ['RAM Usage',s.ram+'%','Normal',C.b,'▤','#2563eb',70],
+ ['Disk Usage',s.disk+'%','Warning',C.o,'◉','#f59e0b',78],
+ ['Network Traffic',s.net+' Mbps','Normal',C.p,'⌬','#8b5cf6',120]]};
+const table=()=>`<div class="tw"><table><thead><tr><th>Server</th><th>CPU</th><th>RAM</th><th>Disk</th><th>Network</th><th>Status</th><th>Last Update</th></tr></thead><tbody>${S.map(s=>`<tr><td><b>${s.n}</b></td><td style="${s.cpu>=90?'color:#ef4444;font-weight:600':''}">${s.cpu}%</td><td style="${s.ram>=85?'color:#ef4444;font-weight:600':''}">${s.ram}%</td><td>${s.disk}%</td><td>${s.net} Mbps</td><td><span class="sd" style="background:${col(s.st)}"></span>${s.st}</td><td>21 Apr 2025 10:24</td></tr>`).join('')}</tbody></table></div>`;
+const notifs=(all)=>(all?[...N,{lv:'WARNING',t:'20 Apr 2025 22:10',m:'Network Server-02 melonjak 180 Mbps',d:'Lonjakan trafik terdeteksi.'},{lv:'INFO',t:'20 Apr 2025 18:00',m:'Server-05 kembali normal',d:'CPU turun di bawah 40%.'}]:N).map(n=>{const[s,c,i]=n.lv=='INFO'?['#dbeafe','#1d4ed8','ℹ️']:lvStyle(n.lv);return `<div class="nt"><div class="ni" style="background:${s}">${i}</div><div style="flex:1"><p><span class="lv" style="background:${s};color:${c}">${n.lv}</span><small>${n.t}</small><br><b style="font-weight:500">${n.m}</b></p><small>${n.d}</small></div><span style="color:var(--mu)">›</span></div>`}).join('');
+const recs=()=>`<div class="rec">${R.map(r=>`<div class="rc ${r.c}" onclick="go('server')"><i>!</i><div>${r.m}<small>${r.d}</small></div><span>›</span></div>`).join('')}</div>`;
+const toggle=()=>`<div class="sw ${tele?'on':''}" onclick="tele=!tele;this.classList.toggle('on');toast('Notifikasi '+(tele?'diaktifkan':'dimatikan'))"></div>`;
+
+function charts(big){const s=S[selSrv],n=range==1?24:range==24?48:range==168?56:60;seed=selSrv*31+range+3;
+ const c=[['CPU Usage (%)',gen(s.cpu,28,n),C.b,100,'%'],['RAM Usage (%)',gen(s.ram,10,n),C.g,100,'%'],['Disk Usage (%)',gen(s.disk,8,n),C.o,100,'%'],['Network Traffic (Mbps)',gen(s.net,60,n),C.p,200,' Mbps']];
+ return `<div class="cg">${c.map((x,i)=>`<div><h4>${x[0]}</h4>${line(x[1],x[2],x[3],x[4],'c'+i+(big?'b':''),big)}</div>`).join('')}</div>`}
+function chartCard(big){return `<div class="card"><div class="ch-h"><h3>Grafik Performa Server</h3><select onchange="selSrv=+this.value;redraw()">${S.map((s,i)=>`<option value="${i}" ${i==selSrv?'selected':''}>${s.n}</option>`).join('')}</select><select onchange="range=+this.value;redraw()"><option value="1" ${range==1?'selected':''}>Last 1 hour</option><option value="24" ${range==24?'selected':''}>Last 24 hours</option><option value="168" ${range==168?'selected':''}>Last 7 days</option></select></div><div id="chs">${charts(big)}</div></div>`}
+function redraw(){$('#chs').innerHTML=charts(cur=='monitoring')}
+
+const P={
+dashboard:()=>`<div class="card wel"><div class="ic">▤</div><div><h1>Selamat Datang, Admin</h1><p>Berikut adalah kondisi performa server di lingkungan PT. XYZ</p></div><div class="dt" id="clk"></div></div>
+<div class="g4">${stats().map((s,i)=>{seed=i*13+5;return `<div class="card stat"><div class="t"><div class="ic" style="background:${s[5]}">${s[4]}</div><div><small>${s[0]}</small><strong>${s[1]}</strong><br><span class="badge ${bc(s[2])}">${s[2]}</span></div></div>${spark(gen(s[6],s[6]*.4),s[3],i)}</div>`}).join('')}</div>
+<div class="cols"><div class="stack">${chartCard()}<div class="card"><h3>Detail Performa Server</h3>${table()}</div></div>
+<div class="stack"><div class="card"><h3>Status Server</h3><div class="srv" style="border:0"><span class="dot" style="background:${C.g}"></span><div><b style="color:${C.g}">Semua Server Online</b><small>5 / 5 server dalam kondisi normal</small></div></div>${S.map(s=>`<div class="srv"><span class="dot" style="background:${C.g}"></span><div>${s.n}<small>${s.ip}</small></div><span class="pill">Online</span></div>`).join('')}</div>
+<div class="card"><div class="top"><h3>Notifikasi Terbaru <span class="badge b-c" style="border-radius:8px;padding:0 6px;margin:0">3</span></h3><a onclick="go('notifikasi')">Lihat Semua</a></div>${notifs()}</div>
+<div class="card row"><div class="ic">✈</div><div><b>Notifikasi via Telegram / Email</b><small>Aktifkan notifikasi untuk mendapatkan peringatan secara real-time.</small>${toggle()}</div></div>
+<div class="card row" style="cursor:pointer" onclick="go('pengaturan')"><div class="ic">⚙</div><div style="flex:1"><b>Pengaturan Threshold</b><small>Atur batas normal, warning, dan critical untuk setiap parameter server.</small></div><span>›</span></div></div></div>
+<div class="card" style="margin-top:14px"><h3>💡 Rekomendasi Tindakan</h3>${recs()}</div>`,
+server:()=>`<div class="card"><h3>Daftar Server</h3><div class="tw"><table><thead><tr><th>Nama</th><th>IP Address</th><th>CPU</th><th>RAM</th><th>Disk</th><th>Network</th><th>Status</th></tr></thead><tbody>${S.map(s=>`<tr><td><b>${s.n}</b></td><td>${s.ip}</td><td>${s.cpu}%</td><td>${s.ram}%</td><td>${s.disk}%</td><td>${s.net} Mbps</td><td><span class="badge ${bc(s.st)}">${s.st}</span></td></tr>`).join('')}</tbody></table></div></div><div class="card" style="margin-top:14px"><h3>Rekomendasi Tindakan</h3>${recs()}</div>`,
+monitoring:()=>chartCard(true)+`<div class="card" style="margin-top:14px"><h3>Detail Performa Server</h3>${table()}</div>`,
+riwayat:()=>`<div class="card"><h3>Riwayat Kejadian</h3><div class="tw"><table><thead><tr><th>Waktu</th><th>Server</th><th>Parameter</th><th>Nilai</th><th>Level</th></tr></thead><tbody>${[['21 Apr 2025 09:45','Server-03','CPU','95%','CRITICAL'],['21 Apr 2025 08:30','Server-02','Disk','88%','WARNING'],['21 Apr 2025 07:15','Server-04','RAM','85%','WARNING'],['20 Apr 2025 22:10','Server-02','Network','180 Mbps','WARNING'],['20 Apr 2025 03:40','Server-01','CPU','91%','CRITICAL'],['19 Apr 2025 14:05','Server-05','RAM','82%','WARNING']].map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td><span class="badge ${r[4]=='CRITICAL'?'b-c':'b-w'}">${r[4]}</span></td></tr>`).join('')}</tbody></table></div></div>`,
+notifikasi:()=>`<div class="card"><h3>Semua Notifikasi</h3>${notifs(true)}</div>`,
+pengaturan:()=>`<div class="card" style="max-width:640px"><h3>Pengaturan Threshold (%)</h3><div class="field"><b style="flex:1">Parameter</b><b style="width:80px">Warning</b><b style="width:80px">Critical</b></div>${[['CPU',70,90],['RAM',70,85],['Disk',75,90]].map(p=>`<div class="field"><label>${p[0]}</label><input type="number" value="${p[1]}" style="width:80px"><input type="number" value="${p[2]}" style="width:80px"></div>`).join('')}<div class="field"><label>Notifikasi via Telegram / Email</label>${toggle()}</div><div style="margin-top:12px"><button class="btn" onclick="toast('Pengaturan tersimpan')">Simpan perubahan</button></div></div>`};
+function render(){$('#app').innerHTML=P[cur]();clock()}
+const h=location.hash.slice(1);if(P[h]){cur=h;$('#ttl').textContent=LBL[h]}
+nav();render();
+</script>
+</body>
+</html>
